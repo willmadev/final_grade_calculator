@@ -13,7 +13,7 @@ function App() {
         <div>
           <p>
             Made By{" "}
-            <a href="https://willma.me" target={"_blank"}>
+            <a href="https://willma.me" target={"_blank"} rel={"noreferrer"}>
               Willma
             </a>
           </p>
