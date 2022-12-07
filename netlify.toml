@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "http://fgc.willma.me/*" 
+  to = "https://finalgradecalculator.willma.me/:splat" 
+  status = 301
+  force = true
