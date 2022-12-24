@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import styled from "styled-components";
 import { Assignment } from "../../types/Assignment";
@@ -137,7 +137,13 @@ const AssignmentRow: FC<AssignmentRowProps> = ({
   assignment,
   updateAssignment,
 }) => {
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // default to not editing when course id changed
+  useEffect(() => {
+    setIsEditing(false);
+  }, [assignment.courseId]);
+
   return (
     <>
       {isEditing ? (
