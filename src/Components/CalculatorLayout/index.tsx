@@ -21,6 +21,7 @@ enum ActionTypes {
   updateCourseName = "updateCourseName",
   addAssignment = "addAssignment",
   updateAssignment = "updateAssignment",
+  setCourses = "setCourses",
 }
 
 type Action =
@@ -38,7 +39,8 @@ type Action =
   | {
       type: ActionTypes.updateAssignment;
       payload: { assignment: Assignment };
-    };
+    }
+  | { type: ActionTypes.setCourses; payload: { courses: Course[] } };
 
 const reducer = (courses: Course[], action: Action): Course[] => {
   switch (action.type) {
@@ -122,6 +124,9 @@ const reducer = (courses: Course[], action: Action): Course[] => {
         return course;
       });
 
+    case ActionTypes.setCourses:
+      return action.payload.courses;
+
     default:
       return courses;
   }
@@ -134,12 +139,34 @@ const CalculatorLayout = () => {
   );
   const [currentCourseId, setCurrentCourseId] = useState<null | number>(null);
   const [currentCourse, setCurrentCourse] = useState<null | Course>(null);
+  const [loading, setLoading] = useState(true);
+
+  // get courses from storage
+  useEffect(() => {
+    const jsonCourses = localStorage.getItem("courses");
+    if (jsonCourses) {
+      dispatch({
+        type: ActionTypes.setCourses,
+        payload: { courses: JSON.parse(jsonCourses) },
+      });
+      console.info("Courses retrieved from storage");
+    }
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
     setCurrentCourse(
       courses.find((course) => course.id === currentCourseId) || null
     );
   }, [currentCourseId, courses]);
+
+  // save courses to storage
+  useEffect(() => {
+    if (!loading) {
+      console.log("Saving courses to storage", courses);
+      localStorage.setItem("courses", JSON.stringify(courses));
+    }
+  }, [courses, loading]);
 
   const addCourse = () => dispatch({ type: ActionTypes.addCourse });
   const updateCourseName = (courseId: number, name: string) =>
