@@ -5,7 +5,7 @@ import { Assignment } from "../../types/Assignment";
 
 const StyledRow = styled.div`
   display: grid;
-  grid-template-columns: auto 100px 100px 50px;
+  grid-template-columns: auto 80px 80px 40px;
   margin: 0px -10px;
   padding: 0px 10px;
   border-radius: 5px;
@@ -29,15 +29,15 @@ const AssignmentRowRegular: FC<AssignmentRowRegularProps> = ({
   return (
     <StyledRow onClick={onClick}>
       <p>{assignment.name}</p>
-      <p>{assignment.worth}</p>
-      <p>{assignment.grade}</p>
+      <p>{assignment.worth}%</p>
+      <p>{assignment.grade}%</p>
     </StyledRow>
   );
 };
 
 const StyledEditRow = styled.form`
   display: grid;
-  grid-template-columns: auto 100px 100px 50px;
+  grid-template-columns: auto 80px 80px 40px;
 `;
 
 const ButtonsContainer = styled.div`
@@ -45,7 +45,7 @@ const ButtonsContainer = styled.div`
   right: 0px;
   bottom: 5px; */
   display: flex;
-  gap: 5px;
+  gap: 3px;
 `;
 
 const ButtonWrapper = styled.button`
@@ -97,7 +97,7 @@ const AssignmentRowEdit: FC<AssignmentRowEditProps> = ({
     setIsEditing(false);
   };
   return (
-    <StyledEditRow onSubmit={handleSubmit}>
+    <StyledEditRow onSubmit={handleSubmit} autoComplete="off">
       <StyledInput
         onChange={handleChange}
         name="name"

@@ -1,9 +1,10 @@
-import { FC, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import styled from "styled-components";
 import { Assignment, Course } from "../../types/Assignment";
 import CourseCalculator from "./CourseCalculator";
 import CourseTitleEditor from "./CourseTitleEditor";
 import courseContext from "./courseContext";
+import { calculateFinalGrade } from "../../utils/calculateGrade";
 
 const StyledCourseLayout = styled.div`
   display: flex;
@@ -41,6 +42,12 @@ const AddAssignmentButton = styled.a`
   }
 `;
 
+const FinalGradeText = styled.p`
+  font-size: 1.25rem;
+  text-align: right;
+  margin-right: 50px;
+`;
+
 interface CourseLayoutProps {
   course: Course;
   addAssignment: (courseId: number) => void;
@@ -55,6 +62,10 @@ const CourseLayout: FC<CourseLayoutProps> = ({
   updateAssignment,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const finalGrade = useMemo(
+    () => calculateFinalGrade(course.assignments),
+    [course]
+  );
   return (
     <courseContext.Provider value={course}>
       <StyledCourseLayout>
@@ -75,7 +86,7 @@ const CourseLayout: FC<CourseLayoutProps> = ({
             + Add Assignment
           </AddAssignmentButton>
         </CalculatorContainer>
-        <p>Final Grade: 75%</p>
+        <FinalGradeText>Final Grade: {finalGrade * 100}%</FinalGradeText>
       </StyledCourseLayout>
     </courseContext.Provider>
   );

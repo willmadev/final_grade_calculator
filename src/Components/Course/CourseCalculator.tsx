@@ -10,7 +10,8 @@ const CalculatorContainer = styled.div`
 
 const HeaderContainer = styled.div`
   display: grid;
-  grid-template-columns: auto 100px 100px 50px;
+  grid-template-columns: auto 80px 80px 40px;
+  margin-bottom: 4px;
   & h3 {
     margin: 0;
   }
