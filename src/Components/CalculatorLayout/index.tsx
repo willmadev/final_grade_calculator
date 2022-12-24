@@ -1,6 +1,6 @@
 import { Reducer, useEffect, useReducer, useState } from "react";
 import styled from "styled-components";
-import { Course } from "../../types/Assignment";
+import { Assignment, Course } from "../../types/Assignment";
 import CalculatorMenu from "../CalculatorMenu";
 import CourseLayout from "../Course";
 
@@ -20,6 +20,7 @@ enum ActionTypes {
   updateCourse = "updateCorse",
   updateCourseName = "updateCourseName",
   addAssignment = "addAssignment",
+  updateAssignment = "updateAssignment",
 }
 
 type Action =
@@ -33,7 +34,11 @@ type Action =
       type: ActionTypes.updateCourseName;
       payload: { courseId: number; name: string };
     }
-  | { type: ActionTypes.addAssignment; payload: { courseId: number } };
+  | { type: ActionTypes.addAssignment; payload: { courseId: number } }
+  | {
+      type: ActionTypes.updateAssignment;
+      payload: { assignment: Assignment };
+    };
 
 const reducer = (courses: Course[], action: Action): Course[] => {
   switch (action.type) {
@@ -72,6 +77,7 @@ const reducer = (courses: Course[], action: Action): Course[] => {
               if (prev.id > curr.id)
                 return {
                   id: prev.id,
+                  courseId: course.id,
                   name: "New assignment",
                   grade: 0,
                   worth: 0,
@@ -79,16 +85,38 @@ const reducer = (courses: Course[], action: Action): Course[] => {
               else
                 return {
                   id: curr.id + 1,
+                  courseId: course.id,
                   name: "New assignment",
                   grade: 0,
                   worth: 0,
                 };
             },
-            { id: 0, name: "New assignment", grade: 0, worth: 0 }
+            {
+              id: 0,
+              courseId: course.id,
+              name: "New assignment",
+              grade: 0,
+              worth: 0,
+            }
           );
           return {
             ...course,
             assignments: [...course.assignments, nextAssignment],
+          };
+        }
+        return course;
+      });
+    case ActionTypes.updateAssignment:
+      return courses.map((course) => {
+        if (course.id === action.payload.assignment.courseId) {
+          return {
+            ...course,
+            assignments: course.assignments.map((assignment) => {
+              if (assignment.id === action.payload.assignment.id) {
+                return action.payload.assignment;
+              }
+              return assignment;
+            }),
           };
         }
         return course;
@@ -123,6 +151,12 @@ const CalculatorLayout = () => {
     dispatch({ type: ActionTypes.removeCourse, payload: { courseId } });
   const addAssignment = (courseId: number) =>
     dispatch({ type: ActionTypes.addAssignment, payload: { courseId } });
+  const updateAssignment = (assignment: Assignment) => {
+    dispatch({
+      type: ActionTypes.updateAssignment,
+      payload: { assignment },
+    });
+  };
 
   return (
     <StyledCalculatorLayout>
@@ -137,6 +171,7 @@ const CalculatorLayout = () => {
           course={currentCourse}
           addAssignment={addAssignment}
           updateCourseName={updateCourseName}
+          updateAssignment={updateAssignment}
         />
       ) : (
         <p>Select a course</p>

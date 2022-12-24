@@ -1,6 +1,6 @@
 import { FC, useState } from "react";
 import styled from "styled-components";
-import { Course } from "../../types/Assignment";
+import { Assignment, Course } from "../../types/Assignment";
 import CourseCalculator from "./CourseCalculator";
 import CourseTitleEditor from "./CourseTitleEditor";
 import courseContext from "./courseContext";
@@ -45,12 +45,14 @@ interface CourseLayoutProps {
   course: Course;
   addAssignment: (courseId: number) => void;
   updateCourseName: (courseId: number, name: string) => void;
+  updateAssignment: (assignment: Assignment) => void;
 }
 
 const CourseLayout: FC<CourseLayoutProps> = ({
   course,
   addAssignment,
   updateCourseName,
+  updateAssignment,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   return (
@@ -65,7 +67,10 @@ const CourseLayout: FC<CourseLayoutProps> = ({
           <Heading onClick={() => setIsEditing(true)}>{course.name}</Heading>
         )}
         <CalculatorContainer>
-          <CourseCalculator assignments={course.assignments} />
+          <CourseCalculator
+            assignments={course.assignments}
+            updateAssignment={updateAssignment}
+          />
           <AddAssignmentButton onClick={() => addAssignment(course.id)}>
             + Add Assignment
           </AddAssignmentButton>

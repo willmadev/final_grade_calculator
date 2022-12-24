@@ -57,7 +57,6 @@ const CourseTitleEditor: FC<CourseTitleEditorProps> = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Heading submitted");
     updateCourseName(course.id, title);
     setIsEditing(false);
   };
