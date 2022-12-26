@@ -20,6 +20,7 @@ enum ActionTypes {
   updateCourse = "updateCorse",
   updateCourseName = "updateCourseName",
   addAssignment = "addAssignment",
+  removeAssignment = "removeAssignment",
   updateAssignment = "updateAssignment",
   setCourses = "setCourses",
 }
@@ -39,6 +40,10 @@ type Action =
   | {
       type: ActionTypes.updateAssignment;
       payload: { assignment: Assignment };
+    }
+  | {
+      type: ActionTypes.removeAssignment;
+      payload: { courseId: number; assignmentId: number };
     }
   | { type: ActionTypes.setCourses; payload: { courses: Course[] } };
 
@@ -70,7 +75,6 @@ const reducer = (courses: Course[], action: Action): Course[] => {
         }
         return course;
       });
-
     case ActionTypes.addAssignment:
       return courses.map((course) => {
         if (course.id === action.payload.courseId) {
@@ -104,6 +108,18 @@ const reducer = (courses: Course[], action: Action): Course[] => {
           return {
             ...course,
             assignments: [...course.assignments, nextAssignment],
+          };
+        }
+        return course;
+      });
+    case ActionTypes.removeAssignment:
+      return courses.map((course) => {
+        if (course.id === action.payload.courseId) {
+          return {
+            ...course,
+            assignments: course.assignments.filter(
+              (assignment) => assignment.id !== action.payload.assignmentId
+            ),
           };
         }
         return course;
@@ -178,12 +194,16 @@ const CalculatorLayout = () => {
     dispatch({ type: ActionTypes.removeCourse, payload: { courseId } });
   const addAssignment = (courseId: number) =>
     dispatch({ type: ActionTypes.addAssignment, payload: { courseId } });
-  const updateAssignment = (assignment: Assignment) => {
+  const updateAssignment = (assignment: Assignment) =>
     dispatch({
       type: ActionTypes.updateAssignment,
       payload: { assignment },
     });
-  };
+  const removeAssignment = (courseId: number, assignmentId: number) =>
+    dispatch({
+      type: ActionTypes.removeAssignment,
+      payload: { assignmentId, courseId },
+    });
 
   return (
     <StyledCalculatorLayout>
@@ -199,6 +219,7 @@ const CalculatorLayout = () => {
           addAssignment={addAssignment}
           updateCourseName={updateCourseName}
           updateAssignment={updateAssignment}
+          removeAssignment={removeAssignment}
         />
       ) : (
         <p>Select a course</p>

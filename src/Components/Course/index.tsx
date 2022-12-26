@@ -53,6 +53,7 @@ interface CourseLayoutProps {
   addAssignment: (courseId: number) => void;
   updateCourseName: (courseId: number, name: string) => void;
   updateAssignment: (assignment: Assignment) => void;
+  removeAssignment: (courseId: number, assignmentId: number) => void;
 }
 
 const CourseLayout: FC<CourseLayoutProps> = ({
@@ -60,6 +61,7 @@ const CourseLayout: FC<CourseLayoutProps> = ({
   addAssignment,
   updateCourseName,
   updateAssignment,
+  removeAssignment,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const finalGrade = useMemo(
@@ -81,6 +83,7 @@ const CourseLayout: FC<CourseLayoutProps> = ({
           <CourseCalculator
             assignments={course.assignments}
             updateAssignment={updateAssignment}
+            removeAssignment={removeAssignment}
           />
           <AddAssignmentButton onClick={() => addAssignment(course.id)}>
             + Add Assignment

@@ -19,27 +19,27 @@ const StyledCourseLink = styled.a`
 interface CourseLinkProps {
   course: Course;
   setCurrentCourseId: React.Dispatch<React.SetStateAction<number | null>>;
+  removeCourse: (courseId: number) => void;
 }
 
-const CourseLink: FC<CourseLinkProps> = ({ course, setCurrentCourseId }) => {
+const CourseLink: FC<CourseLinkProps> = ({
+  course,
+  setCurrentCourseId,
+  removeCourse,
+}) => {
   const { setContextMenu } = useContext(ContextMenuContext);
-  const handleContextMenu = (
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
-  ) => {
-    const menuItems: MenuItem[] = [
-      {
-        text: "test",
-        onClick() {
-          console.log("test clicked");
-        },
+  const menuItems: MenuItem[] = [
+    {
+      text: "Delete Course",
+      onClick() {
+        removeCourse(course.id);
       },
-    ];
-    setContextMenu(e, menuItems);
-  };
+    },
+  ];
   return (
     <StyledCourseLink
       onClick={() => setCurrentCourseId(course.id)}
-      onContextMenu={handleContextMenu}
+      onContextMenu={(e) => setContextMenu(e, menuItems)}
     >
       {course.name}
     </StyledCourseLink>

@@ -1,7 +1,9 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useContext, useEffect, useState } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import styled from "styled-components";
 import { Assignment } from "../../types/Assignment";
+import { MenuItem } from "../../types/Menu";
+import { ContextMenuContext } from "../ContextMenu/ContextMenuProvider";
 
 const StyledRow = styled.div`
   display: grid;
@@ -20,14 +22,16 @@ const StyledRow = styled.div`
 interface AssignmentRowRegularProps {
   assignment: Assignment;
   onClick?: React.MouseEventHandler;
+  onContextMenu?: React.MouseEventHandler;
 }
 
 const AssignmentRowRegular: FC<AssignmentRowRegularProps> = ({
   assignment,
   onClick,
+  onContextMenu,
 }) => {
   return (
-    <StyledRow onClick={onClick}>
+    <StyledRow onClick={onClick} onContextMenu={onContextMenu}>
       <p>{assignment.name}</p>
       <p>{assignment.worth}%</p>
       <p>{assignment.grade}%</p>
@@ -81,6 +85,7 @@ const AssignmentRowEdit: FC<AssignmentRowEditProps> = ({
   assignment,
   setIsEditing,
   updateAssignment,
+  onContextMenu,
 }) => {
   const [inputAssignment, setInputAssignment] = useState(assignment);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,7 +102,11 @@ const AssignmentRowEdit: FC<AssignmentRowEditProps> = ({
     setIsEditing(false);
   };
   return (
-    <StyledEditRow onSubmit={handleSubmit} autoComplete="off">
+    <StyledEditRow
+      onSubmit={handleSubmit}
+      autoComplete="off"
+      onContextMenu={onContextMenu}
+    >
       <StyledInput
         onChange={handleChange}
         name="name"
@@ -131,11 +140,13 @@ const AssignmentRowEdit: FC<AssignmentRowEditProps> = ({
 interface AssignmentRowProps {
   assignment: Assignment;
   updateAssignment: (assignment: Assignment) => void;
+  removeAssignment: (courseId: number, assignmentId: number) => void;
 }
 
 const AssignmentRow: FC<AssignmentRowProps> = ({
   assignment,
   updateAssignment,
+  removeAssignment,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -144,6 +155,16 @@ const AssignmentRow: FC<AssignmentRowProps> = ({
     setIsEditing(false);
   }, [assignment.courseId]);
 
+  const { setContextMenu } = useContext(ContextMenuContext);
+  const menuItems: MenuItem[] = [
+    {
+      text: "Delete Assignment",
+      onClick() {
+        removeAssignment(assignment.courseId, assignment.id);
+      },
+    },
+  ];
+
   return (
     <>
       {isEditing ? (
@@ -151,11 +172,13 @@ const AssignmentRow: FC<AssignmentRowProps> = ({
           assignment={assignment}
           setIsEditing={setIsEditing}
           updateAssignment={updateAssignment}
+          onContextMenu={(e) => setContextMenu(e, menuItems)}
         />
       ) : (
         <AssignmentRowRegular
           assignment={assignment}
           onClick={() => setIsEditing(true)}
+          onContextMenu={(e) => setContextMenu(e, menuItems)}
         />
       )}
     </>

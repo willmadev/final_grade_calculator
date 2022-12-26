@@ -49,6 +49,7 @@ const CalculatorMenu: FC<CalculatorMenuProps> = ({
   courses,
   addCourse,
   setCurrentCourseId,
+  removeCourse,
 }) => {
   return (
     <StyledCalculatorMenu>
@@ -59,6 +60,7 @@ const CalculatorMenu: FC<CalculatorMenuProps> = ({
             key={course.id}
             course={course}
             setCurrentCourseId={setCurrentCourseId}
+            removeCourse={removeCourse}
           />
         ))}
       </CourseList>

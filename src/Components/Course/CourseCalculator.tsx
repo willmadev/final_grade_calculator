@@ -20,10 +20,12 @@ const HeaderContainer = styled.div`
 interface CourseCalculatorProps {
   assignments: Assignment[];
   updateAssignment: (assignment: Assignment) => void;
+  removeAssignment: (courseId: number, assignmentId: number) => void;
 }
 const CourseCalculator: FC<CourseCalculatorProps> = ({
   assignments,
   updateAssignment,
+  removeAssignment,
 }) => {
   return (
     <CalculatorContainer>
@@ -37,6 +39,7 @@ const CourseCalculator: FC<CourseCalculatorProps> = ({
           key={assignment.id}
           assignment={assignment}
           updateAssignment={updateAssignment}
+          removeAssignment={removeAssignment}
         />
       ))}
     </CalculatorContainer>
