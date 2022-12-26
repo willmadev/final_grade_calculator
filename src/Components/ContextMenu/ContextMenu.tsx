@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import styled from "styled-components";
-import { Menu, Position } from "../../types/Menu";
+import { Menu, MenuState, Position } from "../../types/Menu";
 
 const MenuItem = styled.a`
   &:hover {
@@ -24,6 +24,7 @@ const StyledMenu = styled.nav<StyledMenuProps>`
 
 interface ContextMenuProps {
   menu: Menu;
+  setMenuState: (value: React.SetStateAction<MenuState>) => void;
   ref:
     | ((instance: HTMLElement | null) => void)
     | React.RefObject<HTMLElement>
@@ -31,18 +32,26 @@ interface ContextMenuProps {
     | undefined;
 }
 
-const ContextMenu: FC<ContextMenuProps> = React.forwardRef(({ menu }, ref) => {
-  return (
-    <StyledMenu pos={menu.position} ref={ref}>
-      {menu.menuItems.map((menuItem, i) => {
-        return (
-          <MenuItem onClick={menuItem.onClick} key={i}>
-            {menuItem.text}
-          </MenuItem>
-        );
-      })}
-    </StyledMenu>
-  );
-});
+const ContextMenu: FC<ContextMenuProps> = React.forwardRef(
+  ({ menu, setMenuState }, ref) => {
+    return (
+      <StyledMenu pos={menu.position} ref={ref}>
+        {menu.menuItems.map((menuItem, i) => {
+          return (
+            <MenuItem
+              onClick={() => {
+                setMenuState({ isOpen: false });
+                menuItem.onClick();
+              }}
+              key={i}
+            >
+              {menuItem.text}
+            </MenuItem>
+          );
+        })}
+      </StyledMenu>
+    );
+  }
+);
 
 export default ContextMenu;

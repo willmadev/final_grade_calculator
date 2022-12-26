@@ -62,7 +62,11 @@ const ContextMenuProvider: FC<ContextMenuProviderProps> = ({ children }) => {
     <ContextMenuContext.Provider value={{ setContextMenu }}>
       {children}
       {menuState.isOpen ? (
-        <ContextMenu menu={menuState.menu} ref={menuRef} />
+        <ContextMenu
+          menu={menuState.menu}
+          setMenuState={setMenuState}
+          ref={menuRef}
+        />
       ) : null}
     </ContextMenuContext.Provider>
   );
