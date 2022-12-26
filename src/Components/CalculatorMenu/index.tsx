@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import styled from "styled-components";
 import { Course } from "../../types/Assignment";
+import CourseLink from "./CourseLink";
 
 const StyledCalculatorMenu = styled.div`
   background-color: #a9b7ff;
@@ -20,18 +21,6 @@ const Heading = styled.h2`
 const CourseList = styled.div`
   display: flex;
   flex-direction: column;
-`;
-
-const CourseLink = styled.a`
-  font-size: 1.4rem;
-  font-weight: 600;
-  padding: 5px 15px;
-  border-radius: 5px;
-
-  &:hover {
-    background-color: #91a3ff;
-    cursor: pointer;
-  }
 `;
 
 const CreateCourseButton = styled.a`
@@ -68,10 +57,9 @@ const CalculatorMenu: FC<CalculatorMenuProps> = ({
         {courses.map((course) => (
           <CourseLink
             key={course.id}
-            onClick={() => setCurrentCourseId(course.id)}
-          >
-            {course.name}
-          </CourseLink>
+            course={course}
+            setCurrentCourseId={setCurrentCourseId}
+          />
         ))}
       </CourseList>
       <CreateCourseButton onClick={() => addCourse()}>
