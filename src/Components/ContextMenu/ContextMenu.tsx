@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { Menu, MenuState, Position } from "../../types/Menu";
 
 const MenuItem = styled.a`
+  padding: 2px 4px;
+  border-radius: 2px;
   &:hover {
     cursor: pointer;
     background-color: #bdc4ca;
@@ -14,11 +16,12 @@ interface StyledMenuProps {
 }
 const StyledMenu = styled.nav<StyledMenuProps>`
   background-color: white;
-  padding: 5px;
+  padding: 8px;
   border-radius: 5px;
   position: absolute;
   top: ${(props) => `${props.pos.y + 5}px`};
   left: ${(props) => `${props.pos.x + 5}px`};
+  box-shadow: 2px 2px 15px rgba(80, 80, 80, 0.15);
   z-index: 999;
 `;
 
