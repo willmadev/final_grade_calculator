@@ -116,12 +116,14 @@ const AssignmentRowEdit: FC<AssignmentRowEditProps> = ({
       <StyledInput
         onChange={handleChange}
         type="number"
+        step="any"
         name="worth"
         value={inputAssignment.worth}
       />
       <StyledInput
         onChange={handleChange}
         type="number"
+        step="any"
         name="grade"
         value={inputAssignment.grade}
       />

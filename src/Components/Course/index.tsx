@@ -89,7 +89,9 @@ const CourseLayout: FC<CourseLayoutProps> = ({
             + Add Assignment
           </AddAssignmentButton>
         </CalculatorContainer>
-        <FinalGradeText>Final Grade: {finalGrade * 100}%</FinalGradeText>
+        <FinalGradeText>
+          Final Grade: {(finalGrade * 100).toFixed(2)}%
+        </FinalGradeText>
       </StyledCourseLayout>
     </courseContext.Provider>
   );

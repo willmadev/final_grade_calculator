@@ -165,7 +165,6 @@ const CalculatorLayout = () => {
         type: ActionTypes.setCourses,
         payload: { courses: JSON.parse(jsonCourses) },
       });
-      console.info("Courses retrieved from storage");
     }
     setLoading(false);
   }, []);
@@ -179,7 +178,6 @@ const CalculatorLayout = () => {
   // save courses to storage
   useEffect(() => {
     if (!loading) {
-      console.log("Saving courses to storage", courses);
       localStorage.setItem("courses", JSON.stringify(courses));
     }
   }, [courses, loading]);
