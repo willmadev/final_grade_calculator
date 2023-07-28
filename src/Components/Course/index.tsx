@@ -4,7 +4,10 @@ import { Assignment, Course } from "../../types/Assignment";
 import CourseCalculator from "./CourseCalculator";
 import CourseTitleEditor from "./CourseTitleEditor";
 import courseContext from "./courseContext";
-import { calculateFinalGrade } from "../../utils/calculateGrade";
+import {
+  calculateFinalGrade,
+  calculateProjectedGrade,
+} from "../../utils/calculateGrade";
 
 const StyledCourseLayout = styled.div`
   display: flex;
@@ -42,10 +45,19 @@ const AddAssignmentButton = styled.a`
   }
 `;
 
+const GradeContainer = styled.div`
+  margin-right: 50px;
+`;
+
 const FinalGradeText = styled.p`
+  font-weight: 600;
   font-size: 1.25rem;
   text-align: right;
-  margin-right: 50px;
+`;
+
+const ProjectedGradeText = styled.p`
+  font-size: 1.15rem;
+  text-align: right;
 `;
 
 interface CourseLayoutProps {
@@ -66,6 +78,10 @@ const CourseLayout: FC<CourseLayoutProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const finalGrade = useMemo(
     () => calculateFinalGrade(course.assignments),
+    [course]
+  );
+  const projectedGrade = useMemo(
+    () => calculateProjectedGrade(course.assignments),
     [course]
   );
   return (
@@ -89,9 +105,14 @@ const CourseLayout: FC<CourseLayoutProps> = ({
             + Add Assignment
           </AddAssignmentButton>
         </CalculatorContainer>
-        <FinalGradeText>
-          Final Grade: {(finalGrade * 100).toFixed(2)}%
-        </FinalGradeText>
+        <GradeContainer>
+          <ProjectedGradeText>
+            Projected Grade: {(projectedGrade * 100).toFixed(2)}%
+          </ProjectedGradeText>
+          <FinalGradeText>
+            Final Grade: {(finalGrade * 100).toFixed(2)}%
+          </FinalGradeText>
+        </GradeContainer>
       </StyledCourseLayout>
     </courseContext.Provider>
   );
