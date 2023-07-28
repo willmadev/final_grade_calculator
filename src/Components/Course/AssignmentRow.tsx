@@ -76,6 +76,14 @@ const StyledInput = styled.input`
   }
 `;
 
+type EditAssignment = {
+  id: number;
+  courseId: number;
+  name: string;
+  worth: string;
+  grade: string;
+};
+
 interface AssignmentRowEditProps extends AssignmentRowRegularProps {
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
   updateAssignment: (assignment: Assignment) => void;
@@ -87,15 +95,30 @@ const AssignmentRowEdit: FC<AssignmentRowEditProps> = ({
   updateAssignment,
   onContextMenu,
 }) => {
-  const [inputAssignment, setInputAssignment] = useState(assignment);
+  const [inputAssignment, setInputAssignment] = useState<EditAssignment>({
+    ...assignment,
+    worth: assignment.worth.toString(),
+    grade: assignment.grade.toString(),
+  });
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputAssignment((currentInput) => {
-      return { ...currentInput, [e.target.name]: e.target.value };
+      return {
+        ...currentInput,
+        [e.target.name]: e.target.value,
+      };
     });
   };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updateAssignment(inputAssignment);
+    updateAssignment({
+      ...inputAssignment,
+      grade: isNaN(parseFloat(inputAssignment.grade))
+        ? 0
+        : parseFloat(inputAssignment.grade),
+      worth: isNaN(parseFloat(inputAssignment.worth))
+        ? 0
+        : parseFloat(inputAssignment.worth),
+    });
     setIsEditing(false);
   };
   const handleCancel = (e: React.MouseEvent) => {
