@@ -46,16 +46,24 @@ const AddAssignmentButton = styled.a`
 `;
 
 const GradeContainer = styled.div`
-  margin-right: 50px;
+  width: max-content;
+  margin-left: auto;
+  margin-right: 40px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 `;
 
 const FinalGradeText = styled.p`
+  margin: 0;
   font-weight: 600;
   font-size: 1.25rem;
   text-align: right;
 `;
 
 const ProjectedGradeText = styled.p`
+  margin: 0;
   font-size: 1.15rem;
   text-align: right;
 `;
