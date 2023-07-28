@@ -15,13 +15,8 @@ export const calculateProjectedGrade = (assignments: Assignment[]) => {
   assignments.forEach((assignment) => {
     projectedGrade += assignment.grade * 0.01 * assignment.worth * 0.01;
     if (assignment.grade !== 0) {
-      console.log({
-        grade: assignment.grade,
-        worth: assignment.worth,
-      });
       totalProjectedWorth += assignment.worth * 0.01;
     }
   });
-  console.log({ projectedGrade, totalProjectedWorth });
-  return projectedGrade / totalProjectedWorth;
+  return totalProjectedWorth === 0 ? 0 : projectedGrade / totalProjectedWorth;
 };
