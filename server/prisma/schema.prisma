@@ -29,6 +29,8 @@ model Session {
 
 model Course {
   id          Int          @id @default(autoincrement())
+  name        String
+  archived    Boolean
   user        User         @relation(fields: [userId], references: [id])
   userId      Int
   assignments Assignment[]
@@ -36,6 +38,9 @@ model Course {
 
 model Assignment {
   id       Int    @id @default(autoincrement())
+  name     String
+  worth    Float
+  grade    Float
   course   Course @relation(fields: [courseId], references: [id])
   courseId Int
 }

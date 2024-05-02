@@ -1,0 +1,17 @@
+meta {
+  name: Create Course
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/course/
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "course 3"
+  }
+}
