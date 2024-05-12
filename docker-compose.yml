@@ -36,7 +36,7 @@ services:
       - /etc/letsencrypt/live/fgc.willma.me/fullchain.pem:/etc/nginx/ssl/fullchain.pem
       - /etc/letsencrypt/live/fgc.willma.me/privkey.pem:/etc/nginx/ssl/privkey.pem
     ports:
-      - "80:80"
+      - "443:443"
 
 volumes:
   db_data:
