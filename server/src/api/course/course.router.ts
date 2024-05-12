@@ -10,10 +10,10 @@ import {
   updateAssignmentById,
   updateCourseById,
 } from "./course.controller";
-import { authenticate } from "../middleware/authenticate";
+import { authorize } from "../middleware/authorize";
 
 const courseRouter = Router();
-courseRouter.use(authenticate);
+courseRouter.use(authorize);
 courseRouter.get("/", getCourses);
 courseRouter.post("/", createCourse);
 courseRouter.get("/:courseId", getCourseById);

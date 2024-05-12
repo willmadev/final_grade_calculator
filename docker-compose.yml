@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: server
+      POSTGRES_PASSWORD: FHaYH2q54Rn8DqPY
+      POSTGRES_DB: fgc
+    # ports:
+    #   - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - private
+  server:
+    build:
+      context: ./server
+      args:
+        - DATABASE_URL=postgresql://server:FHaYH2q54Rn8DqPY@db:5432/fgc?schema=public
+    depends_on:
+      - db
+    ports:
+      - "8800:8800"
+    networks:
+      - private
+      - public
+
+volumes:
+  db_data:
+networks:
+  public:
+  private:

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import prisma from "../../config/prisma";
 
-export const authenticate = async (
+export const authorize = async (
   req: Request,
   res: Response,
   next: NextFunction
