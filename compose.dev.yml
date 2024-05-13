@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: server
+      POSTGRES_PASSWORD: FHaYH2q54Rn8DqPY
+      POSTGRES_DB: fgc
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  server:
+    build:
+      context: ./server
+      args:
+        - DATABASE_URL=postgresql://server:FHaYH2q54Rn8DqPY@db:5432/fgc?schema=public
+    depends_on:
+      - db
+    ports:
+      - "8800:8800"
+  client:
+    build:
+      context: ./client
+      target: dev
+    volumes:
+      - ./client/src:/client/src
+    ports:
+      - "3000:3000"
+  reverse-proxy:
+    image: nginx
+    depends_on:
+      - db
+      - server
+      - client
+    volumes:
+      - ./reverse_proxy/nginx.dev.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+
+volumes:
+  db_data:
