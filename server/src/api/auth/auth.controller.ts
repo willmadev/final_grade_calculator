@@ -3,12 +3,17 @@ import { ZodError, z } from "zod";
 import bcrypt from "bcrypt";
 import prisma from "../../config/prisma";
 import { User } from "@prisma/client";
+import { config } from "../../config/env";
 
 const saltRounds = 10;
 
 const createSession = async (user: User) => {
   const session = await prisma.session.create({ data: { userId: user.id } });
   return session.id;
+};
+
+export const getUserInfo = async (req: Request, res: Response) => {
+  return res.status(200).send({ email: req.user.email });
 };
 
 const registerSchema = z.object({
@@ -39,7 +44,12 @@ export const register = async (req: Request, res: Response) => {
     data: { email: reqBody.email, password: hash },
   });
 
-  res.cookie("session", await createSession(user));
+  res.cookie("session", await createSession(user), {
+    httpOnly: true,
+    path: "/",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 3600000,
+  });
   return res.status(200).send();
 };
 
@@ -69,7 +79,12 @@ export const login = async (req: Request, res: Response) => {
     return res.status(400).send("Incorrect password");
   }
 
-  res.cookie("session", await createSession(user));
+  res.cookie("session", await createSession(user), {
+    httpOnly: true,
+    path: "/",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 60 * 60 * 1000,
+  });
   return res.status(200).send();
 };
 

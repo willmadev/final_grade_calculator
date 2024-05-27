@@ -2,6 +2,21 @@ import { Request, Response } from "express";
 import prisma from "../../config/prisma";
 import { ZodError, z } from "zod";
 
+const courseSelection = {
+  id: true,
+  name: true,
+  archived: true,
+  assignments: {
+    select: {
+      id: true,
+      name: true,
+      courseId: true,
+      worth: true,
+      grade: true,
+    },
+  },
+};
+
 const getCoursesSchema = z.object({
   archived: z
     .string()
@@ -23,7 +38,8 @@ export const getCourses = async (req: Request, res: Response) => {
   }
   const courses = await prisma.course.findMany({
     where: { ...query, userId: req.user.id },
-    select: { id: true, name: true, archived: true },
+    select: courseSelection,
+    orderBy: { id: "asc" },
   });
   return res.status(200).send(courses);
 };
@@ -43,7 +59,8 @@ export const createCourse = async (req: Request, res: Response) => {
   }
   const course = await prisma.course.create({
     data: { ...body, archived: false, userId: req.user.id },
-    select: { id: true, name: true, archived: true },
+    select: courseSelection,
+    // select: { id: true, name: true, archived: true },
   });
   return res.status(201).send(course);
 };
@@ -53,7 +70,8 @@ export const getCourseById = async (req: Request, res: Response) => {
   if (isNaN(courseId)) return res.status(404).send();
   const course = await prisma.course.findUnique({
     where: { id: courseId, userId: req.user.id },
-    select: { id: true, name: true, archived: true },
+    select: courseSelection,
+    // select: { id: true, name: true, archived: true },
   });
   if (!course) return res.status(404).send();
   return res.status(200).send(course);
@@ -81,7 +99,8 @@ export const updateCourseById = async (req: Request, res: Response) => {
   const course = await prisma.course.update({
     where: { id: courseId, userId: req.user.id },
     data: body,
-    select: { id: true, name: true, archived: true },
+    include: { assignments: true },
+    // select: { id: true, name: true, archived: true },
   });
   return res.status(200).send(course);
 };

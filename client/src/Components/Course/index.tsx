@@ -71,7 +71,7 @@ const ProjectedGradeText = styled.p`
 interface CourseLayoutProps {
   course: Course;
   addAssignment: (courseId: number) => void;
-  updateCourseName: (courseId: number, name: string) => void;
+  updateCourse: (courseId: number, course: Course) => void;
   updateAssignment: (assignment: Assignment) => void;
   removeAssignment: (courseId: number, assignmentId: number) => void;
 }
@@ -79,7 +79,7 @@ interface CourseLayoutProps {
 const CourseLayout: FC<CourseLayoutProps> = ({
   course,
   addAssignment,
-  updateCourseName,
+  updateCourse,
   updateAssignment,
   removeAssignment,
 }) => {
@@ -98,7 +98,7 @@ const CourseLayout: FC<CourseLayoutProps> = ({
         {isEditing ? (
           <CourseTitleEditor
             setIsEditing={setIsEditing}
-            updateCourseName={updateCourseName}
+            updateCourse={updateCourse}
           />
         ) : (
           <Heading onClick={() => setIsEditing(true)}>{course.name}</Heading>

@@ -13,8 +13,5 @@ COPY . /client/
 RUN npm run build
 
 FROM nginx:alpine as prod
-COPY --from=build /client/build /client
+COPY --from=build /client/dist /client
 COPY nginx.conf /etc/nginx/nginx.conf
-
-FROM build as dev
-CMD ["npm", "start"]

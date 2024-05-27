@@ -17,24 +17,6 @@ services:
       - db
     ports:
       - "8800:8800"
-  client:
-    build:
-      context: ./client
-      target: dev
-    volumes:
-      - ./client/src:/client/src
-    ports:
-      - "3000:3000"
-  reverse-proxy:
-    image: nginx
-    depends_on:
-      - db
-      - server
-      - client
-    volumes:
-      - ./reverse_proxy/nginx.dev.conf:/etc/nginx/nginx.conf
-    ports:
-      - "80:80"
 
 volumes:
   db_data:

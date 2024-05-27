@@ -1,7 +1,15 @@
 import { Router } from "express";
-import { changeEmail, login, register, resetPassword } from "./auth.controller";
+import {
+  changeEmail,
+  getUserInfo,
+  login,
+  register,
+  resetPassword,
+} from "./auth.controller";
+import { authorize } from "../middleware/authorize";
 
 const authRouter = Router();
+authRouter.get("/user-info", authorize, getUserInfo);
 authRouter.post("/register", register);
 authRouter.post("/login", login);
 // authRouter.post("/reset-password", resetPassword);

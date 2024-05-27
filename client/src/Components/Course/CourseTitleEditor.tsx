@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
 import courseContext from "./courseContext";
+import { Course } from "../../types/Assignment";
 
 const StyledTitleEditor = styled.form`
   display: flex;
@@ -45,19 +46,19 @@ const ButtonWrapper = styled.button`
 
 interface CourseTitleEditorProps {
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  updateCourseName: (courseId: number, name: string) => void;
+  updateCourse: (courseId: number, course: Course) => void;
 }
 
 const CourseTitleEditor: FC<CourseTitleEditorProps> = ({
   setIsEditing,
-  updateCourseName,
+  updateCourse,
 }) => {
   const course = useContext(courseContext);
   const [title, setTitle] = useState(course.name);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updateCourseName(course.id, title);
+    updateCourse(course.id, { ...course, name: title });
     setIsEditing(false);
   };
 
