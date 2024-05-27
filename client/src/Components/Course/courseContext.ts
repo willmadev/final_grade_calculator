@@ -5,6 +5,7 @@ const courseContext = createContext<Course>({
   id: 0,
   assignments: [],
   name: "",
+  archived: false,
 });
 
 export default courseContext;
