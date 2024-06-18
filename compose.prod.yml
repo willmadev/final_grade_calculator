@@ -13,6 +13,7 @@ services:
       context: ./server
       args:
         - DATABASE_URL=postgresql://server:FHaYH2q54Rn8DqPY@db:5432/fgc?schema=public
+    env_file: ./server/.env.production
     depends_on:
       - db
     restart: always
