@@ -14,4 +14,6 @@ RUN npm run build
 
 EXPOSE 8800
 
+RUN npx prisma migrate deploy
+
 CMD ["node", "dist/server.js"]
