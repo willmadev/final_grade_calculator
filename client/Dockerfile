@@ -6,7 +6,7 @@ WORKDIR /client
 
 COPY package.json /client/package.json
 COPY package-lock.json /client/package-lock.json
-RUN npm i
+RUN npm i --include=dev
 
 COPY . /client/
 
