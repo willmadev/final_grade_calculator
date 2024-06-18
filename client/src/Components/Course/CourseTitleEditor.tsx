@@ -1,9 +1,9 @@
 import React, { FC, useContext, useState } from "react";
 import styled from "styled-components";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
-import courseContext from "./courseContext";
-import { Course } from "../../types/Assignment";
+import { getCourse, updateCourse } from "../../api/course";
 
 const StyledTitleEditor = styled.form`
   display: flex;
@@ -46,19 +46,30 @@ const ButtonWrapper = styled.button`
 
 interface CourseTitleEditorProps {
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  updateCourse: (courseId: number, course: Course) => void;
+  courseId: number;
 }
 
 const CourseTitleEditor: FC<CourseTitleEditorProps> = ({
   setIsEditing,
-  updateCourse,
+  courseId,
 }) => {
-  const course = useContext(courseContext);
-  const [title, setTitle] = useState(course.name);
+  const queryClient = useQueryClient();
+  const query = useQuery({
+    queryKey: [`course/${courseId}`],
+    queryFn: () => getCourse(courseId),
+  });
+  const mutation = useMutation({
+    mutationFn: updateCourse,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["course"] });
+      queryClient.invalidateQueries({ queryKey: [`course/${courseId}`] });
+    },
+  });
+  const [title, setTitle] = useState(query.data.name);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updateCourse(course.id, { ...course, name: title });
+    mutation.mutate({ courseId, course: { name: title } });
     setIsEditing(false);
   };
 

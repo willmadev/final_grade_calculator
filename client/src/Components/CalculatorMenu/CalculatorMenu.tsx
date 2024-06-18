@@ -1,6 +1,7 @@
-import React, { FC } from "react";
 import styled from "styled-components";
-import { Course } from "../../types/Assignment";
+import { Course } from "../../types/Course";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { addCourse, deleteCourse, getCourses } from "../../api/course";
 import CourseLink from "./CourseLink";
 
 const StyledCalculatorMenu = styled.div`
@@ -38,33 +39,27 @@ const CreateCourseButton = styled.a`
   }
 `;
 
-interface CalculatorMenuProps {
-  courses: Course[];
-  addCourse: () => void;
-  removeCourse: (courseId: number) => void;
-  setCurrentCourseId: React.Dispatch<React.SetStateAction<number | null>>;
-}
+const CalculatorMenu = () => {
+  const queryClient = useQueryClient();
+  const query = useQuery({ queryKey: ["course"], queryFn: getCourses });
+  const addCourseMutation = useMutation({
+    mutationFn: addCourse,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["course"] });
+    },
+  });
 
-const CalculatorMenu: FC<CalculatorMenuProps> = ({
-  courses,
-  addCourse,
-  setCurrentCourseId,
-  removeCourse,
-}) => {
   return (
     <StyledCalculatorMenu>
       <Heading>Courses</Heading>
       <CourseList>
-        {courses.map((course) => (
-          <CourseLink
-            key={course.id}
-            course={course}
-            setCurrentCourseId={setCurrentCourseId}
-            removeCourse={removeCourse}
-          />
+        {query.data?.map((course: Course) => (
+          <CourseLink course={course} key={course.id} />
         ))}
       </CourseList>
-      <CreateCourseButton onClick={() => addCourse()}>
+      <CreateCourseButton
+        onClick={() => addCourseMutation.mutate("New Course")}
+      >
         Add Course
       </CreateCourseButton>
     </StyledCalculatorMenu>

@@ -8,15 +8,8 @@ services:
       POSTGRES_DB: fgc
     volumes:
       - db_data:/var/lib/postgresql/data
-  server:
-    build:
-      context: ./server
-      args:
-        - DATABASE_URL=postgresql://server:FHaYH2q54Rn8DqPY@db:5432/fgc?schema=public
-    depends_on:
-      - db
     ports:
-      - "8800:8800"
+      - "5432:5432"
 
 volumes:
   db_data:

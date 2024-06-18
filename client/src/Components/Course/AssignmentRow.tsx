@@ -1,9 +1,12 @@
 import React, { FC, useContext, useEffect, useState } from "react";
 import { FaCheck, FaTimes } from "react-icons/fa";
 import styled from "styled-components";
-import { Assignment } from "../../types/Assignment";
-import { MenuItem } from "../../types/Menu";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { ContextMenuContext } from "../ContextMenu/ContextMenuProvider";
+import { Assignment } from "../../types/Course";
+import { MenuItem } from "../../types/Menu";
+import { deleteAssignment, updateAssignment } from "../../api/course";
 
 const StyledRow = styled.div`
   display: grid;
@@ -86,13 +89,11 @@ type EditAssignment = {
 
 interface AssignmentRowEditProps extends AssignmentRowRegularProps {
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  updateAssignment: (assignment: Assignment) => void;
 }
 
 const AssignmentRowEdit: FC<AssignmentRowEditProps> = ({
   assignment,
   setIsEditing,
-  updateAssignment,
   onContextMenu,
 }) => {
   const [inputAssignment, setInputAssignment] = useState<EditAssignment>({
@@ -100,6 +101,16 @@ const AssignmentRowEdit: FC<AssignmentRowEditProps> = ({
     worth: assignment.worth.toString(),
     grade: assignment.grade.toString(),
   });
+
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: updateAssignment,
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: [`course/${assignment.courseId}/assignment`],
+      }),
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputAssignment((currentInput) => {
       return {
@@ -110,14 +121,17 @@ const AssignmentRowEdit: FC<AssignmentRowEditProps> = ({
   };
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    updateAssignment({
-      ...inputAssignment,
-      grade: isNaN(parseFloat(inputAssignment.grade))
-        ? 0
-        : parseFloat(inputAssignment.grade),
-      worth: isNaN(parseFloat(inputAssignment.worth))
-        ? 0
-        : parseFloat(inputAssignment.worth),
+    mutation.mutate({
+      courseId: assignment.courseId,
+      assignment: {
+        ...inputAssignment,
+        grade: isNaN(parseFloat(inputAssignment.grade))
+          ? 0
+          : parseFloat(inputAssignment.grade),
+        worth: isNaN(parseFloat(inputAssignment.worth))
+          ? 0
+          : parseFloat(inputAssignment.worth),
+      },
     });
     setIsEditing(false);
   };
@@ -164,16 +178,20 @@ const AssignmentRowEdit: FC<AssignmentRowEditProps> = ({
 
 interface AssignmentRowProps {
   assignment: Assignment;
-  updateAssignment: (assignment: Assignment) => void;
-  removeAssignment: (courseId: number, assignmentId: number) => void;
 }
 
-const AssignmentRow: FC<AssignmentRowProps> = ({
-  assignment,
-  updateAssignment,
-  removeAssignment,
-}) => {
+const AssignmentRow: FC<AssignmentRowProps> = ({ assignment }) => {
   const [isEditing, setIsEditing] = useState(false);
+
+  const queryClient = useQueryClient();
+  const deleteMutation = useMutation({
+    mutationFn: deleteAssignment,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [`course/${assignment.courseId}/assignment`],
+      });
+    },
+  });
 
   // default to not editing when course id changed
   useEffect(() => {
@@ -185,7 +203,10 @@ const AssignmentRow: FC<AssignmentRowProps> = ({
     {
       text: "Delete Assignment",
       onClick() {
-        removeAssignment(assignment.courseId, assignment.id);
+        deleteMutation.mutate({
+          courseId: assignment.courseId,
+          assignmentId: assignment.id,
+        });
       },
     },
   ];
@@ -196,7 +217,6 @@ const AssignmentRow: FC<AssignmentRowProps> = ({
         <AssignmentRowEdit
           assignment={assignment}
           setIsEditing={setIsEditing}
-          updateAssignment={updateAssignment}
           onContextMenu={(e) => setContextMenu(e, menuItems)}
         />
       ) : (

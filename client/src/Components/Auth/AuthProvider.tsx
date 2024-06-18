@@ -1,35 +1,52 @@
-import { createContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { fetchApi } from "../../utils/fetchApi";
 
-type AuthObject =
+export type AuthObject =
   | {
-      isLoggedIn: false;
+      isAuthenticated: false;
     }
   | {
-      isLoggedIn: true;
+      isAuthenticated: true;
       email: string;
     };
 
 type AuthContext = {
   auth: AuthObject;
-  setAuth: React.Dispatch<React.SetStateAction<AuthObject>>;
+  refreshAuth: () => Promise<void>;
 };
 
 export const AuthContext = createContext<AuthContext>({
-  auth: { isLoggedIn: false },
-  setAuth: () => {},
+  auth: { isAuthenticated: false },
+  refreshAuth: async () => {},
 });
 
 interface AuthProviderProps {
   children?: React.ReactNode;
 }
 
-const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [auth, setAuth] = useState<AuthObject>({ isLoggedIn: false });
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const [auth, setAuth] = useState<AuthObject>({ isAuthenticated: false });
+
+  const refreshAuth = async () => {
+    try {
+      const userInfo = await fetchApi("/auth/user-info", "GET");
+      setAuth({ email: userInfo.email, isAuthenticated: true });
+    } catch (error) {
+      setAuth({ isAuthenticated: false });
+    }
+  };
+
+  useEffect(() => {
+    refreshAuth();
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ auth, setAuth }}>
+    <AuthContext.Provider value={{ auth, refreshAuth }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export default AuthProvider;
+export const useAuth = () => {
+  return useContext(AuthContext).auth;
+};

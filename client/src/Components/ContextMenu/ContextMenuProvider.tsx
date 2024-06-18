@@ -10,7 +10,7 @@ import { MenuItem, MenuState } from "../../types/Menu";
 import ContextMenu from "./ContextMenu";
 
 interface ContextMenuContextType {
-  setContextMenu: (e: React.MouseEvent, menuItems: MenuItem[]) => void;
+  setContextMenu: (e: React.MouseEvent<any>, menuItems: MenuItem[]) => void;
 }
 export const ContextMenuContext = createContext<ContextMenuContextType>({
   setContextMenu: () => {},

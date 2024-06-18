@@ -1,9 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import Providers from "./Providers";
 import "./index.css";
-import App from "./App";
-import ContextMenuProvider from "./Components/ContextMenu/ContextMenuProvider";
-import AuthProvider from "./Components/Auth/AuthProvider";
+import { AuthProvider } from "./Components/Auth/AuthProvider";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -11,9 +10,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <AuthProvider>
-      <ContextMenuProvider>
-        <App />
-      </ContextMenuProvider>
+      <Providers />
     </AuthProvider>
   </React.StrictMode>
 );

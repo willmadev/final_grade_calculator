@@ -1,8 +1,9 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { baseUrl } from "../../utils/config";
 import { AuthContext } from "./AuthProvider";
+import { useNavigate } from "@tanstack/react-router";
 
 const Heading = styled.h2`
   font-size: 2rem;
@@ -72,21 +73,26 @@ const Link = styled.a`
   }
 `;
 
-const Auth = () => {
-  const [isLogin, setIsLogin] = useState(false);
+interface AuthProps {
+  page: "login" | "register";
+}
+const Auth = ({ page }: AuthProps) => {
+  const navigate = useNavigate();
+  const { auth, refreshAuth } = useContext(AuthContext);
+
   const [errorMessage, setErrorMessage] = useState("");
   const [formValues, setFormValues] = useState({ email: "", password: "" });
-  const { setAuth } = useContext(AuthContext);
 
   const toggleAuthType = () => {
-    setIsLogin((curr) => !curr);
-    setFormValues({ email: "", password: "" });
+    if (page === "login")
+      navigate({ from: "/auth/login", to: "/auth/register" });
+    else navigate({ from: "/auth/register", to: "/auth/login" });
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormValues((curr) => ({ ...curr, [e.target.name]: e.target.value }));
-    console.log(formValues);
   };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setErrorMessage("");
@@ -98,7 +104,7 @@ const Auth = () => {
       setErrorMessage("Password must be at least 8 characters.");
       return;
     }
-    if (isLogin) {
+    if (page === "login") {
       const res = await fetch(`${baseUrl}/auth/login`, {
         body: JSON.stringify(formValues),
         method: "POST",
@@ -117,7 +123,8 @@ const Auth = () => {
         setFormValues((curr) => ({ ...curr, password: "" }));
         return;
       }
-      setAuth({ isLoggedIn: true, email: formValues.email });
+      await refreshAuth();
+      navigate({ to: "/course" });
     } else {
       const res = await fetch(`${baseUrl}/auth/register`, {
         body: JSON.stringify(formValues),
@@ -137,12 +144,18 @@ const Auth = () => {
         setFormValues((curr) => ({ ...curr, password: "" }));
         return;
       }
-      setAuth({ isLoggedIn: true, email: formValues.email });
+      await refreshAuth();
+      navigate({ to: "/course" });
     }
   };
+
+  useEffect(() => {
+    if (auth.isAuthenticated) navigate({ to: "/course" });
+  }, []);
+
   return (
     <AuthContainer>
-      <Heading>{isLogin ? "Log In" : "Sign Up"}</Heading>
+      <Heading>{page === "login" ? "Log In" : "Sign Up"}</Heading>
       <Form onSubmit={handleSubmit}>
         <FormField htmlFor="email">
           Email
@@ -163,10 +176,15 @@ const Auth = () => {
           />
         </FormField>
         <ErrorMessage>{errorMessage}</ErrorMessage>
-        <SubmitButton type="submit" value={isLogin ? "Log In" : "Sign Up"} />
+        <SubmitButton
+          type="submit"
+          value={page === "login" ? "Log In" : "Sign Up"}
+        />
       </Form>
       <Link onClick={toggleAuthType}>
-        {isLogin ? "Already have an account?" : "Don't have an account?"}
+        {page === "login"
+          ? "Don't have an account?"
+          : "Already have an account?"}
       </Link>
     </AuthContainer>
   );

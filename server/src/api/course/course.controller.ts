@@ -39,7 +39,7 @@ export const getCourses = async (req: Request, res: Response) => {
   const courses = await prisma.course.findMany({
     where: { ...query, userId: req.user.id },
     select: courseSelection,
-    orderBy: { id: "asc" },
+    orderBy: { createdAt: "asc" },
   });
   return res.status(200).send(courses);
 };
@@ -121,6 +121,7 @@ export const getAssignments = async (req: Request, res: Response) => {
   if (isNaN(courseId)) return res.status(404).send();
   const assignments = await prisma.assignment.findMany({
     where: { courseId, course: { userId: req.user.id } },
+    orderBy: { createdAt: "asc" },
   });
   return res.status(200).send(assignments);
 };

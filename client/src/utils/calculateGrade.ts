@@ -1,4 +1,4 @@
-import { Assignment } from "../types/Assignment";
+import { Assignment } from "../types/Course";
 
 export const calculateFinalGrade = (assignments: Assignment[]) => {
   let finalGrade = 0;
