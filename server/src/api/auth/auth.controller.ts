@@ -5,8 +5,8 @@ import { User } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import prisma from "../../config/prisma";
 import { config } from "../../config/env";
-import SendgridMailer from "../../../services/mail/SendgridMailer";
-import { emailVerificationTemplate } from "../../../services/mail/templates";
+import SendgridMailer from "../../services/mail/SendgridMailer";
+import { emailVerificationTemplate } from "../../services/mail/templates";
 
 const saltRounds = 10;
 
