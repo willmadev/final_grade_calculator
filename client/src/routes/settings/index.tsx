@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import styled from "styled-components";
 import { FaXmark } from "react-icons/fa6";
 import ChangeEmail from "../../Components/settings/ChangeEmail";
 import ChangePassword from "../../Components/settings/ChangePassword";
-import { useAuth } from "../../Components/Auth/AuthProvider";
+import { AuthContext } from "../../Components/Auth/AuthProvider";
+import { fetchApi } from "../../utils/fetchApi";
 
 const SettingsContainer = styled.div`
   background-color: white;
@@ -78,7 +79,7 @@ const SettingItemAction = styled.button`
 
 const Settings = () => {
   const navigate = useNavigate({ from: "/settings" });
-  const auth = useAuth();
+  const { auth, refreshAuth } = useContext(AuthContext);
 
   const [changeEmailActive, setChangeEmailActive] = useState(false);
   const [changePasswordActive, setChangePasswordActive] = useState(false);
@@ -91,6 +92,11 @@ const Settings = () => {
   };
   const handleChangePassword = (e: React.MouseEvent) => {
     setChangePasswordActive(true);
+  };
+  const handleSignOut = async (e: React.MouseEvent) => {
+    await fetchApi("/auth/logout", "POST");
+    await refreshAuth();
+    navigate({ to: "/auth/register" });
   };
   return (
     <SettingsContainer>
@@ -121,6 +127,15 @@ const Settings = () => {
             </SettingItemAction>
           </SettingItem>
           {changePasswordActive && <ChangePassword />}
+          <SettingItem>
+            <span />
+            <SettingItemAction
+              onClick={handleSignOut}
+              style={{ alignSelf: "end" }}
+            >
+              Log Out
+            </SettingItemAction>
+          </SettingItem>
         </SectionContent>
       </Section>
     </SettingsContainer>

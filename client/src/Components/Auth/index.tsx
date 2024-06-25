@@ -149,10 +149,6 @@ const Auth = ({ page }: AuthProps) => {
     }
   };
 
-  useEffect(() => {
-    if (auth.isAuthenticated) navigate({ to: "/course" });
-  }, []);
-
   return (
     <AuthContainer>
       <Heading>{page === "login" ? "Log In" : "Sign Up"}</Heading>

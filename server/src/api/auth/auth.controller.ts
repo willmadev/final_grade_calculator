@@ -107,6 +107,12 @@ export const login = async (req: Request, res: Response) => {
   return res.status(200).send();
 };
 
+export const logout = async (req: Request, res: Response) => {
+  await prisma.session.delete({ where: { id: req.cookies.session } });
+  res.clearCookie("session");
+  return res.status(204).send();
+};
+
 export const verifyEmail = async (req: Request, res: Response) => {};
 
 const changePasswordSchema = z.object({
