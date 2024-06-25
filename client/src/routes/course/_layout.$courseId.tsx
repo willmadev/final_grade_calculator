@@ -15,6 +15,7 @@ import {
   calculateFinalGrade,
   calculateProjectedGrade,
 } from "../../utils/calculateGrade";
+import { Assignment } from "../../types/Course";
 
 const StyledCourseLayout = styled.div`
   display: flex;
@@ -91,10 +92,33 @@ const Course = () => {
   });
   const addAssignmentMutation = useMutation({
     mutationFn: addAssignment,
-    onSuccess: () =>
+    onMutate: async ({ courseId, grade, name, worth }) => {
+      await queryClient.cancelQueries({
+        queryKey: [`course/${courseId}/assignment`],
+      });
+      const previous = queryClient.getQueryData([
+        `course/${courseId}/assignment`,
+      ]);
+      queryClient.setQueryData(
+        [`course/${courseId}/assignment`],
+        (old: Assignment[]) => [
+          ...old,
+          { id: -1, courseId, name, grade, worth },
+        ]
+      );
+      return { previous };
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: [`course/${courseId}/assignment`],
-      }),
+      });
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(
+        [`course/${courseId}/assignment`],
+        context?.previous
+      );
+    },
   });
 
   if (courseQuery.isLoading || assignmentsQuery.isLoading) return "loading";

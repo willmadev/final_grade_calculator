@@ -105,10 +105,34 @@ const AssignmentRowEdit: FC<AssignmentRowEditProps> = ({
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: updateAssignment,
-    onSuccess: () =>
+    onMutate: async ({ courseId, assignment }) => {
+      await queryClient.cancelQueries({
+        queryKey: [`course/${assignment.courseId}/assignment`],
+      });
+      const previous = queryClient.getQueryData([
+        `course/${assignment.courseId}/assignment`,
+      ]);
+      queryClient.setQueryData(
+        [`course/${assignment.courseId}/assignment`],
+        (old: Assignment[]) =>
+          old.map((val) => {
+            if (val.id !== assignment.id) return val;
+            else return assignment;
+          })
+      );
+      return { previous };
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: [`course/${assignment.courseId}/assignment`],
-      }),
+      });
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(
+        [`course/${assignment.courseId}/assignment`],
+        context?.previous
+      );
+    },
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -190,6 +214,30 @@ const AssignmentRow: FC<AssignmentRowProps> = ({ assignment }) => {
       queryClient.invalidateQueries({
         queryKey: [`course/${assignment.courseId}/assignment`],
       });
+    },
+    onMutate: async ({ courseId, assignmentId }) => {
+      await queryClient.cancelQueries({
+        queryKey: [`course/${courseId}/assignment`],
+      });
+      const previous = queryClient.getQueryData([
+        `course/${courseId}/assignment`,
+      ]);
+      queryClient.setQueryData(
+        [`course/${courseId}/assignment`],
+        (old: Assignment[]) => old.filter((val) => val.id !== assignment.id)
+      );
+      return { previous };
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: [`course/${assignment.courseId}/assignment`],
+      });
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(
+        [`course/${assignment.courseId}/assignment`],
+        context?.previous
+      );
     },
   });
 

@@ -44,8 +44,20 @@ const CalculatorMenu = () => {
   const query = useQuery({ queryKey: ["course"], queryFn: getCourses });
   const addCourseMutation = useMutation({
     mutationFn: addCourse,
-    onSuccess: () => {
+    onMutate: async (courseName) => {
+      await queryClient.cancelQueries({ queryKey: ["course"] });
+      const previous = queryClient.getQueryData(["course"]);
+      queryClient.setQueryData(["course"], (old: Course[]) => [
+        ...old,
+        { id: -1, name: courseName, assignments: [], archived: false },
+      ]);
+      return { previous };
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["course"] });
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData(["course"], context?.previous);
     },
   });
 

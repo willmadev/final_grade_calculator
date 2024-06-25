@@ -7,13 +7,14 @@ import { Course } from "../../types/Course";
 import { MenuItem } from "../../types/Menu";
 import { deleteCourse } from "../../api/course";
 
-const StyledCourseLink = styled(Link)`
+const StyledCourseLink = styled(Link)<{ $loading: Boolean }>`
   font-size: 1.4rem;
   font-weight: 600;
   padding: 5px 15px;
   border-radius: 5px;
   color: black;
   text-decoration: none;
+  ${(props) => (props.$loading ? "opacity: 50%;" : "")}
 
   &:hover {
     background-color: #91a3ff;
@@ -32,12 +33,14 @@ const CourseLink: FC<CourseLinkProps> = ({ course }) => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: () => deleteCourse(course.id),
-    onSuccess: () => {
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["course"] });
       queryClient.invalidateQueries({ queryKey: [`course/${course.id}`] });
       queryClient.invalidateQueries({
         queryKey: [`course/${course.id}/assignment`],
       });
+    },
+    onSuccess: () => {
       if (pathParams.courseId && pathParams.courseId === course.id) {
         navigate({ to: "/course" });
       }
@@ -57,6 +60,8 @@ const CourseLink: FC<CourseLinkProps> = ({ course }) => {
     <StyledCourseLink
       onContextMenu={(e) => setContextMenu(e, menuItems)}
       to={`/course/${course.id}`}
+      disabled={mutation.isPending || course.id === -1}
+      $loading={mutation.isPending || course.id === -1}
     >
       {course.name}
     </StyledCourseLink>

@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FaCheck, FaTimes } from "react-icons/fa";
 
 import { getCourse, updateCourse } from "../../api/course";
+import { Course } from "../../types/Course";
 
 const StyledTitleEditor = styled.form`
   display: flex;
@@ -63,6 +64,37 @@ const CourseTitleEditor: FC<CourseTitleEditorProps> = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["course"] });
       queryClient.invalidateQueries({ queryKey: [`course/${courseId}`] });
+    },
+    onMutate: async ({ courseId, course }) => {
+      await queryClient.cancelQueries({
+        queryKey: [`course`],
+      });
+      await queryClient.cancelQueries({
+        queryKey: [`course/${courseId}`],
+      });
+      const previousCourses = queryClient.getQueryData([`course`]);
+      const previousCourse = queryClient.getQueryData([`course/${courseId}`]);
+      queryClient.setQueryData([`course`], (old: Course[]) =>
+        old.map((val) => {
+          if (val.id !== courseId) return val;
+          else return { ...val, ...course };
+        })
+      );
+      queryClient.setQueryData([`course/${courseId}`], (old: Course) => ({
+        ...old,
+        ...course,
+      }));
+      return { previousCourse, previousCourses };
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["course"] });
+      queryClient.invalidateQueries({
+        queryKey: [`course/${courseId}`],
+      });
+    },
+    onError: (err, newTodo, context) => {
+      queryClient.setQueryData([`course`], context?.previousCourses);
+      queryClient.setQueryData([`course/${courseId}`], context?.previousCourse);
     },
   });
   const [title, setTitle] = useState(query.data.name);
