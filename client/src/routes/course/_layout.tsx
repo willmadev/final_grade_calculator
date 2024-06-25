@@ -6,7 +6,7 @@ import { fetchApi } from "../../utils/fetchApi";
 
 const StyledCalculatorLayout = styled.div`
   width: 800px;
-  height: 100%;
+  min-height: 100%;
   max-width: 80vw;
   display: grid;
   grid-template-columns: 1fr 3fr;
