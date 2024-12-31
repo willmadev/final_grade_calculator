@@ -83,16 +83,8 @@ const CourseLink: FC<CourseLinkProps> = ({ course }) => {
     <StyledCourseLink
       onContextMenu={(e) => setContextMenu(e, menuItems)}
       to={`/course/${course.id}`}
-      disabled={
-        archiveMutation.isPending ||
-        deleteMutation.isPending ||
-        course.id === -1
-      }
-      $loading={
-        archiveMutation.isPending ||
-        deleteMutation.isPending ||
-        course.id === -1
-      }
+      disabled={archiveMutation.isPending || deleteMutation.isPending}
+      $loading={archiveMutation.isPending || deleteMutation.isPending}
     >
       {course.name}
     </StyledCourseLink>
