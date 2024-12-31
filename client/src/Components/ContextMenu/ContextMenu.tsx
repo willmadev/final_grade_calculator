@@ -23,6 +23,9 @@ const StyledMenu = styled.nav<StyledMenuProps>`
   left: ${(props) => `${props.pos.x + 5}px`};
   box-shadow: 2px 2px 15px rgba(80, 80, 80, 0.15);
   z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 `;
 
 interface ContextMenuProps {

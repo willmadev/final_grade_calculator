@@ -12,3 +12,10 @@ export type Course = {
   assignments: Assignment[];
   archived: boolean;
 };
+
+export type ArchivedCourse = {
+  id: number;
+  name: string;
+  archived: boolean;
+  archivedAt: string;
+};

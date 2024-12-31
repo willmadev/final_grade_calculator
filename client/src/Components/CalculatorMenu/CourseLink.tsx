@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ContextMenuContext } from "../ContextMenu/ContextMenuProvider";
 import { Course } from "../../types/Course";
 import { MenuItem } from "../../types/Menu";
-import { deleteCourse } from "../../api/course";
+import { deleteCourse, updateCourse } from "../../api/course";
 
 const StyledCourseLink = styled(Link)<{ $loading: Boolean }>`
   font-size: 1.4rem;
@@ -31,7 +31,7 @@ const CourseLink: FC<CourseLinkProps> = ({ course }) => {
   const navigate = useNavigate();
 
   const queryClient = useQueryClient();
-  const mutation = useMutation({
+  const deleteMutation = useMutation({
     mutationFn: () => deleteCourse(course.id),
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["course"] });
@@ -46,13 +46,36 @@ const CourseLink: FC<CourseLinkProps> = ({ course }) => {
       }
     },
   });
+  const archiveMutation = useMutation({
+    mutationFn: () =>
+      updateCourse({ courseId: course.id, course: { archived: true } }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["course"] });
+      queryClient.invalidateQueries({ queryKey: [`course/${course.id}`] });
+      queryClient.invalidateQueries({
+        queryKey: [`course/${course.id}/assignment`],
+      });
+      queryClient.invalidateQueries({ queryKey: ["archivedCourse"] });
+    },
+    onSuccess: () => {
+      if (pathParams.courseId && pathParams.courseId === course.id) {
+        navigate({ to: "/course" });
+      }
+    },
+  });
 
   const { setContextMenu } = useContext(ContextMenuContext);
   const menuItems: MenuItem[] = [
     {
+      text: "Archive Course",
+      onClick() {
+        archiveMutation.mutate();
+      },
+    },
+    {
       text: "Delete Course",
       onClick() {
-        mutation.mutate();
+        deleteMutation.mutate();
       },
     },
   ];
@@ -60,8 +83,16 @@ const CourseLink: FC<CourseLinkProps> = ({ course }) => {
     <StyledCourseLink
       onContextMenu={(e) => setContextMenu(e, menuItems)}
       to={`/course/${course.id}`}
-      disabled={mutation.isPending || course.id === -1}
-      $loading={mutation.isPending || course.id === -1}
+      disabled={
+        archiveMutation.isPending ||
+        deleteMutation.isPending ||
+        course.id === -1
+      }
+      $loading={
+        archiveMutation.isPending ||
+        deleteMutation.isPending ||
+        course.id === -1
+      }
     >
       {course.name}
     </StyledCourseLink>

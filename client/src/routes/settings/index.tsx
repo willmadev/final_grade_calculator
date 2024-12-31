@@ -6,17 +6,16 @@ import ChangeEmail from "../../Components/settings/ChangeEmail";
 import ChangePassword from "../../Components/settings/ChangePassword";
 import { AuthContext } from "../../Components/Auth/AuthProvider";
 import { fetchApi } from "../../utils/fetchApi";
+import ArchivedCourses from "../../Components/settings/ArchivedCourses";
 
 const SettingsContainer = styled.div`
   background-color: white;
-  height: max-content;
-  padding: 40px 45px 100px;
+  padding: 40px 45px 60px;
   border-radius: 20px;
   box-shadow: 4px 4px 15px rgba(80, 80, 80, 0.15);
   width: 650px;
   max-width: 90%;
-  height: 80%;
-  max-height: 500px;
+  min-height: 500px;
   display: flex;
   flex-direction: column;
   gap: 30px;
@@ -137,6 +136,11 @@ const Settings = () => {
             </SettingItemAction>
           </SettingItem>
         </SectionContent>
+      </Section>
+      <Section>
+        <h2>Archived Courses</h2>
+        <Divider />
+        <ArchivedCourses />
       </Section>
     </SettingsContainer>
   );

@@ -17,30 +17,29 @@ const courseSelection = {
   },
 };
 
-const getCoursesSchema = z.object({
-  archived: z
-    .string()
-    .toLowerCase()
-    .transform((x) => x === "true")
-    .pipe(z.boolean())
-    .optional(),
-  // string to boolean
-});
+const archivedCourseSelection = {
+  id: true,
+  name: true,
+  archived: true,
+  archivedAt: true,
+};
 
 export const getCourses = async (req: Request, res: Response) => {
-  let query;
-  try {
-    query = getCoursesSchema.parse(req.query);
-  } catch (e) {
-    console.error(e);
-    if (e instanceof ZodError) return res.status(400).send(e.message);
-    return res.status(500).send("An error occured");
-  }
   const courses = await prisma.course.findMany({
-    where: { ...query, userId: req.user.id },
+    where: { userId: req.user.id, archived: false },
     select: courseSelection,
     orderBy: { createdAt: "asc" },
   });
+  return res.status(200).send(courses);
+};
+
+export const getArchivedCourses = async (req: Request, res: Response) => {
+  const courses = await prisma.course.findMany({
+    where: { userId: req.user.id, archived: true },
+    select: archivedCourseSelection,
+    orderBy: { archivedAt: "asc" },
+  });
+  console.log({ courses });
   return res.status(200).send(courses);
 };
 
@@ -60,7 +59,6 @@ export const createCourse = async (req: Request, res: Response) => {
   const course = await prisma.course.create({
     data: { ...body, archived: false, userId: req.user.id },
     select: courseSelection,
-    // select: { id: true, name: true, archived: true },
   });
   return res.status(201).send(course);
 };
@@ -69,9 +67,8 @@ export const getCourseById = async (req: Request, res: Response) => {
   const courseId = parseInt(req.params.courseId);
   if (isNaN(courseId)) return res.status(404).send();
   const course = await prisma.course.findUnique({
-    where: { id: courseId, userId: req.user.id },
+    where: { id: courseId, archived: false, userId: req.user.id },
     select: courseSelection,
-    // select: { id: true, name: true, archived: true },
   });
   if (!course) return res.status(404).send();
   return res.status(200).send(course);
@@ -92,6 +89,9 @@ export const updateCourseById = async (req: Request, res: Response) => {
     if (e instanceof ZodError) return res.status(400).send(e.message);
     return res.status(500).send("An error occured");
   }
+  if (body.archived !== undefined) {
+    body = { ...body, archivedAt: body.archived ? new Date() : null };
+  }
   const courseExists = await prisma.course.findUnique({
     where: { id: courseId, userId: req.user.id },
   });
@@ -100,7 +100,6 @@ export const updateCourseById = async (req: Request, res: Response) => {
     where: { id: courseId, userId: req.user.id },
     data: body,
     include: { assignments: true },
-    // select: { id: true, name: true, archived: true },
   });
   return res.status(200).send(course);
 };
@@ -113,6 +112,47 @@ export const deleteCourseById = async (req: Request, res: Response) => {
   });
   if (!courseExists) return res.status(404).send();
   await prisma.course.delete({ where: { id: courseId, userId: req.user.id } });
+  return res.status(204).send();
+};
+
+const updateCoursesSchema = z.object({
+  ids: z.array(z.number()),
+  action: z.enum(["archive", "unarchive"]),
+});
+
+export const updateCoursesByIds = async (req: Request, res: Response) => {
+  let body;
+  try {
+    body = updateCoursesSchema.parse(req.body);
+  } catch (e) {
+    if (e instanceof ZodError) return res.status(400).send(e.message);
+    return res.status(500).send("An error occured");
+  }
+  let data;
+  if (body.action === "archive")
+    data = { archived: true, archivedAt: new Date() };
+  else if (body.action === "unarchive")
+    data = { archived: false, archivedAt: null };
+  else return res.status(500).send("An error occured");
+  await prisma.course.updateMany({
+    data,
+    where: { id: { in: body.ids }, userId: req.user.id },
+  });
+  return res.status(204).send();
+};
+
+const deleteCoursesSchema = z.object({ ids: z.array(z.number()) });
+export const deleteCoursesByIds = async (req: Request, res: Response) => {
+  let body;
+  try {
+    body = deleteCoursesSchema.parse(req.body);
+  } catch (e) {
+    if (e instanceof ZodError) return res.status(400).send(e.message);
+    return res.status(500).send("An error occured");
+  }
+  await prisma.course.deleteMany({
+    where: { id: { in: body.ids }, userId: req.user.id },
+  });
   return res.status(204).send();
 };
 

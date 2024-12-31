@@ -6,6 +6,15 @@ export const addCourse = (courseName: string) =>
 
 export const getCourses = () => fetchApi("/course");
 
+export const getArchivedCourses = () => fetchApi("/course/archived");
+
+export type CourseAction = "archive" | "unarchive";
+export const updateCourses = (courseIds: number[], action: CourseAction) =>
+  fetchApi("/course", "PUT", { ids: courseIds, action });
+
+export const deleteCourses = (courseIds: number[]) =>
+  fetchApi("/course", "DELETE", { ids: courseIds });
+
 export const getCourse = (courseId: number) => fetchApi(`/course/${courseId}`);
 
 export const updateCourse = ({
