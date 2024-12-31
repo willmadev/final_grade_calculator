@@ -7,6 +7,7 @@ import ChangePassword from "../../Components/settings/ChangePassword";
 import { AuthContext } from "../../Components/Auth/AuthProvider";
 import { fetchApi } from "../../utils/fetchApi";
 import ArchivedCourses from "../../Components/settings/ArchivedCourses";
+import Cookies from "js-cookie";
 
 const SettingsContainer = styled.div`
   background-color: white;
@@ -95,7 +96,8 @@ const Settings = () => {
   const handleSignOut = async (e: React.MouseEvent) => {
     await fetchApi("/auth/logout", "POST");
     await refreshAuth();
-    navigate({ to: "/auth/register" });
+    if (Cookies.get("visited")) navigate({ to: "/auth/login" });
+    else navigate({ to: "/auth/register" });
   };
   return (
     <SettingsContainer>

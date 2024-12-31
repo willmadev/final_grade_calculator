@@ -69,6 +69,7 @@ export const register = async (req: Request, res: Response) => {
     secure: process.env.NODE_ENV === "production",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
+  res.cookie("visited", true);
   return res.status(200).send();
 };
 
@@ -104,6 +105,7 @@ export const login = async (req: Request, res: Response) => {
     secure: process.env.NODE_ENV === "production",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
+  res.cookie("visited", true);
   return res.status(200).send();
 };
 
@@ -151,7 +153,7 @@ export const changePassword = async (req: Request, res: Response) => {
     secure: process.env.NODE_ENV === "production",
     maxAge: 3600000,
   });
-
+  res.cookie("visited", true);
   return res.status(204).send();
 };
 

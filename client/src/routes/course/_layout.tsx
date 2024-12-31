@@ -1,6 +1,7 @@
 import { Outlet, createFileRoute, redirect } from "@tanstack/react-router";
 import React from "react";
 import styled from "styled-components";
+import Cookies from "js-cookie";
 import CalculatorMenu from "../../Components/CalculatorMenu/CalculatorMenu";
 import { fetchApi } from "../../utils/fetchApi";
 
@@ -26,7 +27,8 @@ export const Route = createFileRoute("/course/_layout")({
     try {
       const userInfo = await fetchApi("/auth/user-info", "GET");
     } catch (err) {
-      throw redirect({ to: "/auth/register" });
+      if (Cookies.get("visited")) throw redirect({ to: "/auth/login" });
+      else throw redirect({ to: "/auth/register" });
     }
   },
 });
