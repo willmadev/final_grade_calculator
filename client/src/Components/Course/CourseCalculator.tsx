@@ -20,7 +20,7 @@ const HeaderContainer = styled.div`
   }
 `;
 
-const CourseCalculator = ({ courseId }: { courseId: number }) => {
+const CourseCalculator = ({ courseId }: { courseId: string }) => {
   const query = useQuery({
     queryKey: [`course/${courseId}/assignment`],
     queryFn: () => getCourseAssignments(courseId),

@@ -80,8 +80,8 @@ const StyledInput = styled.input`
 `;
 
 type EditAssignment = {
-  id: number;
-  courseId: number;
+  id: string;
+  courseId: string;
   name: string;
   worth: string;
   grade: string;

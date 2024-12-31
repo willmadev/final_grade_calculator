@@ -73,8 +73,8 @@ const DeleteButton = styled.button`
 
 interface RowProps {
   course: ArchivedCourse;
-  selected: number[];
-  setSelected: React.Dispatch<React.SetStateAction<number[]>>;
+  selected: string[];
+  setSelected: React.Dispatch<React.SetStateAction<string[]>>;
 }
 const Row = ({ course, selected, setSelected }: RowProps) => {
   const onChange = (e: any) => {
@@ -102,7 +102,7 @@ const Row = ({ course, selected, setSelected }: RowProps) => {
 };
 
 const ArchivedCourses = () => {
-  const [selected, setSelected] = useState<number[]>([]);
+  const [selected, setSelected] = useState<string[]>([]);
   const queryClient = useQueryClient();
   const query = useQuery({
     queryKey: ["archivedCourse"],

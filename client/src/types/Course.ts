@@ -1,20 +1,20 @@
 export type Assignment = {
-  id: number;
-  courseId: number;
+  id: string;
+  courseId: string;
   name: string;
   worth: number;
   grade: number;
 };
 
 export type Course = {
-  id: number;
+  id: string;
   name: string;
   assignments: Assignment[];
   archived: boolean;
 };
 
 export type ArchivedCourse = {
-  id: number;
+  id: string;
   name: string;
   archived: boolean;
   archivedAt: string;

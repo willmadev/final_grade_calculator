@@ -47,7 +47,7 @@ const ButtonWrapper = styled.button`
 
 interface CourseTitleEditorProps {
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
-  courseId: number;
+  courseId: string;
 }
 
 const CourseTitleEditor: FC<CourseTitleEditorProps> = ({

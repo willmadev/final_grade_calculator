@@ -164,5 +164,4 @@ const Course = () => {
 
 export const Route = createFileRoute("/course/_layout/$courseId")({
   component: Course,
-  parseParams: (rawParams) => ({ courseId: parseInt(rawParams.courseId) }),
 });

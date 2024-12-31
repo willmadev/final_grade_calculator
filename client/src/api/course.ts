@@ -9,26 +9,26 @@ export const getCourses = () => fetchApi("/course");
 export const getArchivedCourses = () => fetchApi("/course/archived");
 
 export type CourseAction = "archive" | "unarchive";
-export const updateCourses = (courseIds: number[], action: CourseAction) =>
+export const updateCourses = (courseIds: string[], action: CourseAction) =>
   fetchApi("/course", "PUT", { ids: courseIds, action });
 
-export const deleteCourses = (courseIds: number[]) =>
+export const deleteCourses = (courseIds: string[]) =>
   fetchApi("/course", "DELETE", { ids: courseIds });
 
-export const getCourse = (courseId: number) => fetchApi(`/course/${courseId}`);
+export const getCourse = (courseId: string) => fetchApi(`/course/${courseId}`);
 
 export const updateCourse = ({
   courseId,
   course,
 }: {
-  courseId: number;
+  courseId: string;
   course: Partial<Course>;
 }) => fetchApi(`/course/${courseId}`, "PUT", course);
 
-export const deleteCourse = (courseId: number) =>
+export const deleteCourse = (courseId: string) =>
   fetchApi(`/course/${courseId}`, "DELETE");
 
-export const getCourseAssignments = (courseId: number) =>
+export const getCourseAssignments = (courseId: string) =>
   fetchApi(`/course/${courseId}/assignment`);
 
 export const addAssignment = ({
@@ -37,7 +37,7 @@ export const addAssignment = ({
   worth,
   grade,
 }: {
-  courseId: number;
+  courseId: string;
   name: string;
   worth: number;
   grade: number;
@@ -48,7 +48,7 @@ export const updateAssignment = ({
   courseId,
   assignment,
 }: {
-  courseId: number;
+  courseId: string;
   assignment: Assignment;
 }) =>
   fetchApi(
@@ -61,6 +61,6 @@ export const deleteAssignment = ({
   courseId,
   assignmentId,
 }: {
-  courseId: number;
-  assignmentId: number;
+  courseId: string;
+  assignmentId: string;
 }) => fetchApi(`/course/${courseId}/assignment/${assignmentId}`, "DELETE");
