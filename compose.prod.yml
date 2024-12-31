@@ -21,9 +21,6 @@ services:
     build:
       context: ./client
       target: prod
-    volumes:
-      - /etc/letsencrypt/live/fgc.willma.me/fullchain.pem:/etc/nginx/ssl/fullchain.pem
-      - /etc/letsencrypt/live/fgc.willma.me/privkey.pem:/etc/nginx/ssl/privkey.pem
     restart: always
   reverse-proxy:
     image: nginx
