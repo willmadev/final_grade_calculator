@@ -53,8 +53,8 @@ jobs:
       - name: Docker Stack Deploy
         uses: cssnr/stack-deploy-action@v1
         with:
-          name: zenfulstats
-          file: docker-stack.yaml
+          name: final_grade_calculator
+          file: docker-stack.yml
           host: fgc.willma.me
           user: github_deploy
           ssh_key: ${{ secrets.DEPLOY_SSH_PRIVATE_KEY }}
