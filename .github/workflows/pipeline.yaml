@@ -34,12 +34,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create .env file
-        env:
-          ENV_FILE: ${{ secrets.SERVER_ENV_PROD }}
-        run: |
-          echo "$ENV_FILE" > .env
-
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
@@ -67,6 +61,12 @@ jobs:
       - name: Create envfile
         run: |
           echo "GIT_COMMIT_HASH=${{ github.sha }}" >> ./envfile
+
+      - name: Create server .env file
+        env:
+          ENV_FILE: ${{ secrets.SERVER_ENV_PROD }}
+        run: |
+          echo "$ENV_FILE" > ./server/.env
 
       - name: Docker Stack Deploy
         uses: cssnr/stack-deploy-action@v1
