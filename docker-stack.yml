@@ -10,7 +10,7 @@ services:
       - db_data:/var/lib/postgresql/data
   server:
     image: ghcr.io/willmadev/final_grade_calculator_server:${GIT_COMMIT_HASH:-latest}
-    env_file: ./server/.env.production
+    env_file: ./server/.env
     depends_on:
       - db
     restart: always

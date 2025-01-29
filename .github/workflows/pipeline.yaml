@@ -8,16 +8,8 @@ permissions:
   packages: write
 
 jobs:
-  build-and-push-image:
+  build-and-push-client:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - context: ./client
-            image: ghcr.io/willmadev/final_grade_calculator_client
-          - context: ./server
-            image: ghcr.io/willmadev/final_grade_calculator_server
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -32,21 +24,47 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ${{ matrix.context }}
-          push: true
+          context: ./client
           tags: |
-            ${{ matrix.image }}:latest
-            ${{ matrix.image }}:${{ github.sha }}
+            ${{ ghcr.io/willmadev/final_grade_calculator_client }}:latest
+            ${{ ghcr.io/willmadev/final_grade_calculator_client }}:${{ github.sha }}
+  build-and-push-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create .env file
+        env:
+          ENV_FILE: ${{ secrets.SERVER_ENV_PROD }}
+        run: |
+          echo "$ENV_FILE" > .env
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: https://ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./server
+          tags: |
+            ${{ ghcr.io/willmadev/final_grade_calculator_server }}:latest
+            ${{ ghcr.io/willmadev/final_grade_calculator_server }}:${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
     needs:
-      - build-and-push-image
+      - build-and-push-client
+      - build-and-push-server
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: create env file
+      - name: Create envfile
         run: |
           echo "GIT_COMMIT_HASH=${{ github.sha }}" >> ./envfile
 
