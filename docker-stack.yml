@@ -16,6 +16,7 @@ services:
     restart: always
     labels:
       traefik.http.routers.api.rule: "Host(`fgc.willma.me`) && PathPrefix(`/api`)"
+      traefik.http.services.client.loadbalancer.server.port: 8800
   client:
     image: ghcr.io/willmadev/final_grade_calculator_client:${GIT_COMMIT_HASH:-latest}
     restart: always
@@ -23,6 +24,8 @@ services:
       traefik.http.routers.api.rule: "Host(`fgc.willma.me`)"
       traefik.http.routers.web.entrypoints: "websecure"
       traefik.http.routers.web.tls.certresolver: "myresolver"
+      traefik.http.services.client.loadbalancer.server.port: 3000
+
   reverse-proxy:
     image: traefik
     command:
@@ -50,3 +53,4 @@ services:
 
 volumes:
   db_data:
+  letsencrypt:
