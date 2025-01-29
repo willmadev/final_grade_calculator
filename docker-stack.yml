@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: server
+      POSTGRES_PASSWORD: FHaYH2q54Rn8DqPY
+      POSTGRES_DB: fgc
+    volumes:
+      - db_data:/var/lib/postgresql/data
+  server:
+    image: ghcr.io/willmadev/final_grade_calculator_server:${GIT_COMMIT_HASH:-latest}
+    env_file: ./server/.env.production
+    depends_on:
+      - db
+    restart: always
+    labels:
+      traefik.http.routers.api.rule: "Host(`fgc.willma.me`) && PathPrefix(`/api`)"
+  client:
+    image: ghcr.io/willmadev/final_grade_calculator_client:${GIT_COMMIT_HASH:-latest}
+    restart: always
+    labels:
+      traefik.http.routers.api.rule: "Host(`fgc.willma.me`)"
+      traefik.http.routers.web.entrypoints: "websecure"
+      traefik.http.routers.web.tls.certresolver: "myresolver"
+  reverse-proxy:
+    image: traefik
+    command:
+      - "--providers.docker"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.websecure.address=:443"
+      - "--certificatesresolvers.myresolver.acme.tlschallenge=true"
+      - "--certificatesresolvers.myresolver.acme.email=willmadev@gmail.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+    ports:
+      - mode: host
+        protocol: tcp
+        published: 80
+        target: 80
+      - mode: host
+        protocol: tcp
+        published: 443
+        target: 443
+    volumes:
+      - letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock
+
+volumes:
+  db_data:
