@@ -66,7 +66,7 @@ jobs:
         env:
           ENV_FILE: ${{ secrets.SERVER_ENV_PROD }}
         run: |
-          echo "$ENV_FILE" > ./server/.env
+          echo "$ENV_FILE" > ./server/.env.prod
 
       - name: Docker Stack Deploy
         uses: cssnr/stack-deploy-action@v1

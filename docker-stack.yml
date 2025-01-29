@@ -1,7 +1,6 @@
 services:
   db:
-    image: postgres
-    restart: always
+    image: postgres:16
     environment:
       POSTGRES_USER: server
       POSTGRES_PASSWORD: FHaYH2q54Rn8DqPY
@@ -10,25 +9,29 @@ services:
       - db_data:/var/lib/postgresql/data
   server:
     image: ghcr.io/willmadev/final_grade_calculator_server:${GIT_COMMIT_HASH:-latest}
-    env_file: ./server/.env
+    env_file: ./server/.env.prod
     depends_on:
       - db
-    restart: always
     labels:
-      "traefik.enable=true"
-      "traefik.http.services.client.loadbalancer.server.port=8800"
-      "traefik.http.routers.web.rule=Host(`fgc.willma.me`) && PathPrefix(`/api`)"
-      "traefik.http.routers.web.entrypoints=websecure"
-      "traefik.http.routers.web.tls.certresolver=myresolver"
+      - "traefik.enable=true"
+      - "traefik.http.services.server.loadbalancer.server.port=8800"
+      - "traefik.http.routers.server.rule=(Host(`fgc.willma.me`) && PathPrefix(`/api/`))"
+      - "traefik.http.routers.server.entrypoints=websecure"
+      - "traefik.http.routers.server.tls.certresolver=myresolver"
+    deploy:
+      update_config:
+        order: start-first
   client:
     image: ghcr.io/willmadev/final_grade_calculator_client:${GIT_COMMIT_HASH:-latest}
-    restart: always
     labels:
-      "traefik.enable=true"
-      "traefik.http.services.client.loadbalancer.server.port=3000"
-      "traefik.http.routers.web.rule=Host(`fgc.willma.me`)"
-      "traefik.http.routers.web.entrypoints=websecure"
-      "traefik.http.routers.web.tls.certresolver=myresolver"
+      - "traefik.enable=true"
+      - "traefik.http.services.client.loadbalancer.server.port=3000"
+      - "traefik.http.routers.client.rule=Host(`fgc.willma.me`)"
+      - "traefik.http.routers.client.entrypoints=websecure"
+      - "traefik.http.routers.client.tls.certresolver=myresolver"
+    deploy:
+      update_config:
+        order: start-first
 
   reverse-proxy:
     image: traefik
