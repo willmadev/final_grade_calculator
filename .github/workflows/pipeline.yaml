@@ -52,8 +52,8 @@ jobs:
         with:
           context: ./server
           tags: |
-            ${{ ghcr.io/willmadev/final_grade_calculator_server }}:latest
-            ${{ ghcr.io/willmadev/final_grade_calculator_server }}:${{ github.sha }}
+            ghcr.io/willmadev/final_grade_calculator_server:latest
+            ghcr.io/willmadev/final_grade_calculator_server:${{ github.sha }}
 
   deploy:
     runs-on: ubuntu-latest
