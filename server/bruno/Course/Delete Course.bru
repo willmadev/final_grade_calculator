@@ -1,0 +1,22 @@
+meta {
+  name: Delete Course
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{baseUrl}}/api/course/{{courseId}}
+  body: none
+  auth: none
+}
+
+body:json {
+  {
+    "name": "course 2",
+    "archived": true
+  }
+}
+
+vars:pre-request {
+  courseId: 3
+}

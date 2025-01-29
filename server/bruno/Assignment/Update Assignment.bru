@@ -1,0 +1,24 @@
+meta {
+  name: Update Assignment
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{baseUrl}}/api/course/{{courseId}}/assignment/{{assignmentId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "A2",
+    "worth": 5,
+    "grade": 0
+  }
+}
+
+vars:pre-request {
+  courseId: 2
+  assignmentId: 2
+}

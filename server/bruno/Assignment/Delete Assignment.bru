@@ -1,0 +1,16 @@
+meta {
+  name: Delete Assignment
+  type: http
+  seq: 4
+}
+
+delete {
+  url: {{baseUrl}}/api/course/{{courseId}}/assignment/{{assignmentId}}
+  body: json
+  auth: none
+}
+
+vars:pre-request {
+  courseId: 2
+  assignmentId: 4
+}

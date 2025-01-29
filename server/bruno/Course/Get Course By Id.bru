@@ -1,0 +1,15 @@
+meta {
+  name: Get Course By Id
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/course/{{courseId}}
+  body: none
+  auth: none
+}
+
+vars:pre-request {
+  courseId: 2
+}

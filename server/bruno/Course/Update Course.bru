@@ -1,0 +1,22 @@
+meta {
+  name: Update Course
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{baseUrl}}/api/course/{{courseId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "name": "course 2",
+    "archived": true
+  }
+}
+
+vars:pre-request {
+  courseId: 2
+}
