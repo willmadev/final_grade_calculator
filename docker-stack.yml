@@ -15,20 +15,20 @@ services:
       - db
     restart: always
     labels:
-      traefik.enable: true
-      traefik.http.services.client.loadbalancer.server.port: 8800
-      traefik.http.routers.web.rule: Host(`fgc.willma.me`) && PathPrefix(`/api`)
-      traefik.http.routers.web.entrypoints: websecure
-      traefik.http.routers.web.tls.certresolver: myresolver
+      "traefik.enable=true"
+      "traefik.http.services.client.loadbalancer.server.port=8800"
+      "traefik.http.routers.web.rule=Host(`fgc.willma.me`) && PathPrefix(`/api`)"
+      "traefik.http.routers.web.entrypoints=websecure"
+      "traefik.http.routers.web.tls.certresolver=myresolver"
   client:
     image: ghcr.io/willmadev/final_grade_calculator_client:${GIT_COMMIT_HASH:-latest}
     restart: always
     labels:
-      traefik.enable: true
-      traefik.http.services.client.loadbalancer.server.port: 3000
-      traefik.http.routers.web.rule: Host(`fgc.willma.me`)
-      traefik.http.routers.web.entrypoints: websecure
-      traefik.http.routers.web.tls.certresolver: myresolver
+      "traefik.enable=true"
+      "traefik.http.services.client.loadbalancer.server.port=3000"
+      "traefik.http.routers.web.rule=Host(`fgc.willma.me`)"
+      "traefik.http.routers.web.entrypoints=websecure"
+      "traefik.http.routers.web.tls.certresolver=myresolver"
 
   reverse-proxy:
     image: traefik
