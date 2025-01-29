@@ -26,8 +26,8 @@ jobs:
         with:
           context: ./client
           tags: |
-            ${{ ghcr.io/willmadev/final_grade_calculator_client }}:latest
-            ${{ ghcr.io/willmadev/final_grade_calculator_client }}:${{ github.sha }}
+            ghcr.io/willmadev/final_grade_calculator_client:latest
+            ghcr.io/willmadev/final_grade_calculator_client:${{ github.sha }}
   build-and-push-server:
     runs-on: ubuntu-latest
     steps:
