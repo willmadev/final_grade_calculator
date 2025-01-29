@@ -14,9 +14,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - dockerfile: ./client/Dockerfile
+          - context: ./client
             image: ghcr.io/willmadev/final_grade_calculator_client
-          - dockerfile: ./server/Dockerfile
+          - context: ./server
             image: ghcr.io/willmadev/final_grade_calculator_server
     steps:
       - name: Checkout repository
@@ -32,8 +32,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .
-          file: ${{ matrix.dockerfile }}
+          context: ${{ matrix.context }}
           push: true
           tags: |
             ${{ matrix.image }}:latest
